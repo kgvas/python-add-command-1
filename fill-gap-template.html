@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Завдання: пропущена команда</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAFAF8;
+    --grid:#D7E3ED;
+    --ink:#1F2A37;
+    --ink-soft:#5B6674;
+    --red:#C81D25;
+    --red-soft:#F4D9DA;
+    --green:#1E7A46;
+    --green-soft:#DCEEE1;
+    --amber:#B9770E;
+    --amber-soft:#FBEBD3;
+    --card:#FFFFFF;
+    --line:#E3E0D4;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 100%,
+      var(--paper);
+    background-attachment:local;
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    padding:32px 20px 60px;
+  }
+  .wrap{max-width:720px;margin:0 auto;}
+  header{margin-bottom:22px;}
+  h1{
+    font-family:'Kalam',cursive;
+    font-size:28px;
+    color:var(--red);
+    margin:0;
+    transform:rotate(-1deg);
+  }
+  .sub{color:var(--ink-soft);font-size:14px;margin-top:4px;}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:22px 24px;
+    margin-bottom:18px;
+  }
+  .card h2{font-size:17px;margin:0 0 12px;font-weight:600;}
+  label{font-size:13px;color:var(--ink-soft);display:block;margin-bottom:6px;}
+  input[type=text]{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:15px;
+    font-family:'Inter',sans-serif;
+    background:#fff;
+  }
+  input[type=text]:focus{outline:2px solid var(--red-soft);border-color:var(--red);}
+  .btn{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    padding:10px 20px;
+    border-radius:8px;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    color:#fff;
+    cursor:pointer;
+  }
+  .btn:hover{background:#374151;}
+  .btn.secondary{background:#fff;color:var(--ink);border-color:var(--line);}
+  .btn.secondary:hover{background:#f3f2ee;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .task-box{
+    background:var(--amber-soft);
+    border:1px dashed var(--amber);
+    border-radius:10px;
+    padding:14px 16px;
+    font-size:15px;
+    line-height:1.6;
+    margin-bottom:16px;
+  }
+  pre.code{
+    background:#F0EEE6;
+    border-radius:8px;
+    padding:16px 18px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:15px;
+    line-height:2;
+    white-space:pre-wrap;
+    margin:0 0 14px;
+    overflow-x:auto;
+  }
+  pre.code input.gap{
+    width:9ch;
+    min-width:9ch;
+    padding:2px 6px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:15px;
+    border:2px dashed var(--red);
+    border-radius:6px;
+    background:#fff;
+    color:var(--ink);
+    vertical-align:baseline;
+  }
+  pre.code input.gap:focus{outline:2px solid var(--red-soft);border-style:solid;}
+  .stamp{
+    font-family:'Kalam',cursive;
+    font-size:24px;
+    color:var(--red);
+    border:2px solid var(--red);
+    border-radius:8px;
+    padding:8px 18px;
+    display:inline-block;
+    transform:rotate(-3deg);
+    margin-top:10px;
+  }
+  .stamp.ok{color:var(--green);border-color:var(--green);}
+  .stamp.fail{color:var(--amber);border-color:var(--amber);}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{
+    text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--ink-soft);padding:8px 10px;border-bottom:2px solid var(--ink);
+  }
+  td{padding:9px 10px;border-bottom:1px solid #EFEDE5;vertical-align:top;}
+  code.mini{
+    display:block;white-space:pre-wrap;font-family:'JetBrains Mono',monospace;
+    font-size:12px;background:#F0EEE6;padding:6px 8px;border-radius:6px;max-width:240px;
+  }
+  .score{font-weight:700;}
+  .score.good{color:var(--green);}
+  .score.bad{color:var(--red);}
+  .empty{text-align:center;padding:40px 20px;color:var(--ink-soft);font-size:14px;}
+  .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+  .hint{font-size:12px;color:var(--ink-soft);margin-top:8px;}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+// ======================= НАЛАШТУВАННЯ ЗАВДАННЯ =======================
+// Змінюйте тільки цей блок перед кожним новим завданням.
+
+const TASK_TITLE = "Практична: пропущена команда input (Python)";
+
+// Постановка задачі, яку бачить учень.
+const TASK_TEXT = "Зроби так, щоб на екран виводилась змінна a, яку користувач вводить з клавіатури. У коді пропущена команда. Впиши її у порожнє віконце.";
+
+// Код із пропуском. Місце пропуску позначте трьома підкресленнями ___
+// (рівно один пропуск на завдання).
+const CODE_TEMPLATE = `a=float(___("Введите значение переменной a"))
+print(a)`;
+
+// Правильна відповідь у віконці. Пробіли навколо ігноруються,
+// регістр враховується (Python розрізняє input та Input).
+const EXPECTED_ANSWER = "input";
+
+// Скільки спроб має учень.
+const MAX_ATTEMPTS = 3;
+
+// Той самий backend URL, що й у інших файлах.
+const APPS_SCRIPT_URL = 'ВСТАВТЕ_СЮДИ_URL_ВЕБ_ДОДАТКУ';
+
+// Пароль для перегляду результатів викладачем.
+const TEACHER_PASSCODE = 'вчитель2026';
+
+// ===================== КІНЕЦЬ БЛОКУ НАЛАШТУВАНЬ =====================
+
+function slugify(str){
+  // Слова сортуються, тож «Іван Петренко» і «Петренко Іван» дають один ідентифікатор.
+  const words = str.trim().toLowerCase().replace(/ё/g,'е').split(/[^a-zа-яіїєґ0-9]+/i).filter(Boolean);
+  return words.sort().join('-') || 'student';
+}
+function esc(str){
+  return String(str == null ? '' : str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function backendConfigured(){
+  return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf('ВСТАВТЕ') === -1;
+}
+function teacherModeRequested(){
+  return new URLSearchParams(location.search).has('admin');
+}
+function normalizeAnswer(str){
+  return (str||'').replace(/\s+/g, '');
+}
+function isAnswerCorrect(input){
+  return normalizeAnswer(input) === normalizeAnswer(EXPECTED_ANSWER);
+}
+
+// Позначки на цьому пристрої (окремо для кожного імені, щоб на спільному
+// шкільному комп'ютері один учень не блокував іншого): чи робота здана
+// і скільки спроб витрачено. Оновлення сторінки лічильник не скидає.
+function doneKey(id){ return 'gapfill-done:' + TASK_TITLE + ':' + id; }
+function attemptsKey(id){ return 'gapfill-attempts:' + TASK_TITLE + ':' + id; }
+function isDoneLocally(id){
+  try{ return !!localStorage.getItem(doneKey(id)); }catch(e){ return false; }
+}
+function markDoneLocally(id){
+  try{ localStorage.setItem(doneKey(id), '1'); }catch(e){}
+}
+function loadAttempts(id){
+  try{ return parseInt(localStorage.getItem(attemptsKey(id)) || '0', 10) || 0; }catch(e){ return 0; }
+}
+function saveAttempts(id, n){
+  try{ localStorage.setItem(attemptsKey(id), String(n)); }catch(e){}
+}
+
+let state = {
+  studentName: '',
+  studentId: '',
+  attemptsUsed: 0,
+  submitted: false,
+  alreadySubmitted: false,
+  finalOutcome: null, // 'correct' | 'failed'
+  teacherUnlocked: false,
+  teacherRows: []
+};
+
+function el(html){
+  const t = document.createElement('template');
+  t.innerHTML = html.trim();
+  return t.content.firstElementChild;
+}
+
+async function submitResult(record){
+  if(!backendConfigured()) return {ok:false, error:'not_configured'};
+  try{
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify(record)
+    });
+    return await res.json();
+  }catch(e){
+    console.error('submit error', e);
+    return {ok:false, error:'network'};
+  }
+}
+
+async function loadResults(){
+  if(!backendConfigured()) return [];
+  try{
+    const res = await fetch(APPS_SCRIPT_URL + '?kind=memory', {cache:'no-store'});
+    const rows = await res.json();
+    return rows.filter(r => r.task === TASK_TITLE)
+               .sort((a,b)=> (b.submittedAt||0) - (a.submittedAt||0));
+  }catch(e){
+    console.error('load error', e);
+    return [];
+  }
+}
+
+function render(){
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+
+  if(!backendConfigured()){
+    app.appendChild(el(`
+      <div class="card" style="border:1px solid var(--red);background:var(--red-soft);">
+        <b style="color:var(--red);">Бекенд не налаштовано.</b>
+        Відкрийте цей файл і замініть <code>APPS_SCRIPT_URL</code> на адресу
+        вашого опублікованого Google Apps Script Web App.
+      </div>
+    `));
+  }
+
+  app.appendChild(el(`
+    <header>
+      <h1>${esc(TASK_TITLE)}</h1>
+      <div class="sub">Спроб: ${MAX_ATTEMPTS}. Результат: «Здано» або «Не здано»</div>
+    </header>
+  `));
+
+  const section = document.createElement('section');
+  app.appendChild(section);
+
+  if(teacherModeRequested()){
+    renderTeacher(section);
+  }else{
+    renderStudent(section);
+  }
+}
+
+function renderStudent(section){
+  if(state.alreadySubmitted || (state.studentId && !state.submitted && isDoneLocally(state.studentId))){
+    section.appendChild(el(`
+      <div class="card">
+        <h2>Завдання вже здано</h2>
+        <p>Повторна спроба можлива лише з дозволу викладача.</p>
+      </div>
+    `));
+    return;
+  }
+
+  if(!state.studentName){
+    section.appendChild(el(`
+      <div class="card">
+        <h2>Представся</h2>
+        <label for="name-input">Ім'я та прізвище</label>
+        <input type="text" id="name-input" placeholder="Наприклад: Іван Петренко" />
+        <div style="margin-top:14px;">
+          <button class="btn" id="start-btn">Почати</button>
+        </div>
+      </div>
+    `));
+    section.querySelector('#start-btn').addEventListener('click', ()=>{
+      const name = section.querySelector('#name-input').value.trim();
+      if(!name){
+        section.querySelector('#name-input').style.borderColor = 'var(--red)';
+        return;
+      }
+      state.studentName = name;
+      state.studentId = slugify(name);
+      state.attemptsUsed = loadAttempts(state.studentId);
+      render();
+    });
+    section.querySelector('#name-input').addEventListener('keydown', e=>{
+      if(e.key==='Enter') section.querySelector('#start-btn').click();
+    });
+    return;
+  }
+
+  if(state.submitted){
+    const success = state.finalOutcome === 'correct';
+    section.appendChild(el(`
+      <div class="card">
+        <h2>${esc(state.studentName)}</h2>
+        ${success
+          ? `<div class="stamp ok">Здано</div>`
+          : `<div class="stamp fail">Не здано</div>
+             <p class="hint">Спроби вичерпано. Якщо потрібна ще одна, звернись до вчителя.</p>`
+        }
+      </div>
+    `));
+    return;
+  }
+
+  const parts = CODE_TEMPLATE.split('___');
+  const before = esc(parts[0]);
+  const after = esc(parts.slice(1).join('___'));
+
+  const card = el(`
+    <div class="card">
+      <h2>${esc(state.studentName)}, твоє завдання</h2>
+      <div class="task-box">${esc(TASK_TEXT)}</div>
+      <label for="gap-input">Код (впиши пропущене у віконце)</label>
+      <pre class="code">${before}<input type="text" class="gap" id="gap-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Пропущена команда">${after}</pre>
+      <p class="hint" id="attempts-left">Спроб залишилось: ${MAX_ATTEMPTS - state.attemptsUsed} з ${MAX_ATTEMPTS}</p>
+      <div style="margin-top:14px;">
+        <button class="btn" id="submit-btn">Здати</button>
+      </div>
+      <p class="hint" id="submit-error" style="color:var(--red);"></p>
+    </div>
+  `);
+  section.appendChild(card);
+
+  const gap = card.querySelector('#gap-input');
+  gap.addEventListener('keydown', e=>{
+    if(e.key==='Enter') card.querySelector('#submit-btn').click();
+  });
+
+  card.querySelector('#submit-btn').addEventListener('click', async ()=>{
+    const answer = gap.value;
+    if(!answer.trim()){
+      card.querySelector('#submit-error').textContent = 'Віконце порожнє.';
+      return;
+    }
+
+    const correct = isAnswerCorrect(answer);
+    const attemptsLeft = MAX_ATTEMPTS - state.attemptsUsed;
+
+    // Невірно, але спроби ще є: нічого не фіксуємо на сервері.
+    if(!correct && attemptsLeft > 1){
+      state.attemptsUsed++;
+      saveAttempts(state.studentId, state.attemptsUsed);
+      card.querySelector('#submit-error').textContent =
+        'Невірно. Спробуй ще раз.';
+      card.querySelector('#attempts-left').textContent =
+        'Спроб залишилось: ' + (MAX_ATTEMPTS - state.attemptsUsed) + ' з ' + MAX_ATTEMPTS;
+      gap.focus();
+      gap.select();
+      return;
+    }
+
+    // Або відповідь вірна, або це була остання спроба: фіксуємо результат.
+    const record = {
+      kind: 'memory',
+      task: TASK_TITLE,
+      studentId: state.studentId,
+      studentName: state.studentName,
+      submittedCode: answer,
+      isCorrect: correct,
+      attemptsUsed: state.attemptsUsed + 1,
+      pasteAttempts: 0,
+      submittedAt: Date.now()
+    };
+    const btn = card.querySelector('#submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Надсилання…';
+    const result = await submitResult(record);
+    if(result.error === 'already_submitted'){
+      // Сервер вже має остаточний результат цього учня.
+      markDoneLocally(state.studentId);
+      state.alreadySubmitted = true;
+      render();
+    }else if(result.ok){
+      state.attemptsUsed++;
+      saveAttempts(state.studentId, state.attemptsUsed);
+      markDoneLocally(state.studentId);
+      state.submitted = true;
+      state.finalOutcome = correct ? 'correct' : 'failed';
+      render();
+    }else{
+      btn.disabled = false;
+      btn.textContent = 'Здати';
+      card.querySelector('#submit-error').textContent = 'Помилка надсилання, спробуй ще раз.';
+    }
+  });
+}
+
+function renderTeacher(section){
+  if(!state.teacherUnlocked){
+    section.appendChild(el(`
+      <div class="card" style="max-width:380px;">
+        <h2>Вхід для викладача</h2>
+        <label for="passcode-input">Пароль</label>
+        <input type="text" id="passcode-input" placeholder="Введіть пароль" />
+        <div style="margin-top:14px;">
+          <button class="btn" id="unlock-btn">Увійти</button>
+        </div>
+        <p class="hint" id="passcode-error" style="color:var(--red);"></p>
+      </div>
+    `));
+    const input = section.querySelector('#passcode-input');
+    const tryUnlock = async ()=>{
+      if(input.value === TEACHER_PASSCODE){
+        state.teacherUnlocked = true;
+        state.teacherRows = await loadResults();
+        render();
+      }else{
+        section.querySelector('#passcode-error').textContent = 'Невірний пароль';
+        input.style.borderColor = 'var(--red)';
+      }
+    };
+    section.querySelector('#unlock-btn').addEventListener('click', tryUnlock);
+    input.addEventListener('keydown', e=>{ if(e.key==='Enter') tryUnlock(); });
+    return;
+  }
+
+  section.appendChild(el(`
+    <div class="card">
+      <div class="toolbar">
+        <h2 style="margin:0;">Результати</h2>
+        <span style="flex:1;"></span>
+        <button class="btn secondary" id="refresh-btn">Оновити список</button>
+      </div>
+      <div id="teacher-table-holder"><div class="empty">Завантаження…</div></div>
+    </div>
+  `));
+  section.querySelector('#refresh-btn').addEventListener('click', async ()=>{
+    state.teacherRows = await loadResults();
+    renderTeacherTable(section);
+  });
+  renderTeacherTable(section);
+}
+
+function renderTeacherTable(section){
+  const holder = section.querySelector('#teacher-table-holder');
+  if(!holder) return;
+  if(state.teacherRows.length === 0){
+    holder.innerHTML = '';
+    holder.appendChild(el(`<div class="empty">Поки ніхто не здавав. Натисни «Оновити список».</div>`));
+    return;
+  }
+  const table = el(`
+    <table>
+      <thead>
+        <tr><th>Учень</th><th>Результат</th><th>Спроб</th><th>Остання відповідь</th><th>Час</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  `);
+  const tbody = table.querySelector('tbody');
+  state.teacherRows.forEach(r=>{
+    const time = r.submittedAt ? new Date(r.submittedAt).toLocaleString('uk-UA') : '—';
+    tbody.appendChild(el(`
+      <tr>
+        <td>${esc(r.studentName)}</td>
+        <td class="score ${r.isCorrect?'good':'bad'}">${r.isCorrect?'✓ здано':'✕ не здано'}</td>
+        <td>${esc(r.attemptsUsed || 1)}/${MAX_ATTEMPTS}</td>
+        <td><code class="mini">${esc(r.submittedCode)}</code></td>
+        <td>${time}</td>
+      </tr>
+    `));
+  });
+  holder.innerHTML = '';
+  holder.appendChild(table);
+}
+
+render();
+</script>
+</body>
+</html>
